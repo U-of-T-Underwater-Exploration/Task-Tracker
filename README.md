@@ -1,45 +1,30 @@
 # Task-Tracker
 
+This repository tracks the development tasks for the `uuv-code` underwater vehicle stack. For each task it records the goal and the design of the ROS 2 nodes that implement it, in the same format as the existing node documentation.
 
+- [nodes.md](nodes.md): the nodes already on the `dev` branch.
+- [new_nodes/](new_nodes/README.md): the design for the tasks below, with conventions, the system diagram and open questions.
 
-### Simulation
-Goal: test control algorithm
-Very simple -> just port CAD model and ROS2 inside. 
-Stonefish simulator
+## Tasks
 
-### Path planning
-A*
-Potential field navigation
-Map format?
+Listed in the suggested order of work. The full table, with dependencies and "done when" criteria, is in [new_nodes/README.md](new_nodes/README.md#suggested-order-of-work).
 
-### DVL Reading
-Goal: read from DVL and test what data is available
-- Give the data profile
-- Generate a report on what is available for the DVL
+| # | Task | Goal | Nodes |
+| --- | --- | --- | --- |
+| 0 | [Merge feature branches](new_nodes/feature_branches/README.md) | Bring the sensor, BMS and state-estimator branches onto `dev` with agreed topic names | IMU, compass, barometer, BMS, state estimator ([fixes needed](new_nodes/integration_fixes.md)) |
+| 1 | [DVL Reading](new_nodes/dvl_reading/README.md) | Read the Kogger Micro DVL and report what data it actually provides | [uuv_dvl_driver](new_nodes/dvl_reading/uuv_dvl_driver.md), [dvl_profiler](new_nodes/dvl_reading/dvl_profiler.md) |
+| 2 | [Simulation](new_nodes/simulation/README.md) | Test the control stack in Stonefish before pool time | [stonefish_simulator](new_nodes/simulation/stonefish_simulator.md), [sim_bridge](new_nodes/simulation/sim_bridge.md) |
+| 3 | [Rover Safety](new_nodes/rover_safety/README.md) | Detect sensor or state malfunctions and cut motor commands | [safety_monitor](new_nodes/rover_safety/safety_monitor.md) |
+| 4 | [Using the DVL: State Estimation](new_nodes/state_estimation/README.md) | Fuse DVL velocity and depth into the state estimator; avoid the seabed | changes to [state_estimator](new_nodes/changes_to_existing/state_estimator.md) |
+| 5 | [Adaptive Controller](new_nodes/adaptive_controller/README.md) | Slotine-Li controller with online gradient updates of the model parameters | [adaptive_controller](new_nodes/adaptive_controller/adaptive_controller.md) |
+| 6 | [Sonar Mapping](new_nodes/sonar_mapping/README.md) | Build a map of the pool or lake from the Ping360 | [ping360_node](new_nodes/sonar_mapping/ping360_node.md), [sonar_mapper](new_nodes/sonar_mapping/sonar_mapper.md) |
+| 7 | [Path Planning](new_nodes/path_planning/README.md) | Plan with A* on the map and follow the path | [global_planner](new_nodes/path_planning/global_planner.md), [path_follower](new_nodes/path_planning/path_follower.md) |
 
-link: Kogger specs and Protocol page
-https://kogger.tech/product/micro-dvl/
-https://github.com/koggertech/Kogger-Protocol
+## Supporting documents
 
-### Using DVL
-- Depth detection - avoid hitting seabed
-- Odeometry information help with EKF
-
-What the protocol shows. The PDF has no beam-angle or beamwidth field, but it defines ID_DVL_VEL (0x79), version 2, a 68-byte message with these fields:
-Velocity: VELOCITY_X, Y, Z, plus Z1 and Z2, all in m/s.
-Uncertainty: one value per velocity field, so each velocity comes with its own error estimate.
-Distance: DISTANCE_Z, DISTANCE_Z1, DISTANCE_Z2, in meters.
-Timing and status: a flags word (bit meanings aren't documented), a timestamp, a delta time, and a latency. There are three beams.
-
-### Sonar Mapping
-*Consult Prof. Busheer* for what he uses to do lake mapping.
-https://bluerobotics.com/store/sonars/imaging-sonars/ping360-sonar-r1-rp/
-underwater SLAM
-https://www.mdpi.com/2072-4292/15/10/2496
-
-### Rover safety
-Detect sensor or state malfunction and cut out motor commands.
-
-### Adaptive controller
-Slotine-Li controller
-Implement gradient updates to the system parameters.
+| Document | Contents |
+| --- | --- |
+| [Changes to existing nodes](new_nodes/changes_to_existing/README.md) | Edits to `joystick_hal`, `motion_converter_node`, `thruster_driver_node`, `state_estimator`, the sensor drivers and the URDF |
+| [Integration fixes](new_nodes/integration_fixes.md) | What must be fixed before the feature branches merge into `dev` |
+| [New messages](new_nodes/uuv_msgs.md) | The custom messages in `uuv_msgs` |
+| [Open questions](new_nodes/README.md#open-questions) | Vendor, library and method questions still to answer |
