@@ -1,5 +1,7 @@
 # Stonefish Simulator (`stonefish_simulator`, package `stonefish_ros2`, third-party)
 
+https://github.com/patrykcieslak/stonefish
+
 **Status:** third-party.
 
 **Subscription(s):**
